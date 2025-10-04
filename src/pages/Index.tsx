@@ -229,6 +229,13 @@ const Index = () => {
             </div>
 
             <div className="flex items-center gap-4">
+              <Link to="/dashboard">
+                <Button variant="outline">
+                  <Icon name="LayoutDashboard" size={18} className="mr-2" />
+                  Личный кабинет
+                </Button>
+              </Link>
+              
               <Sheet>
                 <SheetTrigger asChild>
                   <Button variant="ghost" size="icon" className="relative">
