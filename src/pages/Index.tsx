@@ -14,6 +14,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import LicenseSelector, { type License } from '@/components/LicenseSelector';
+import AudioPlayer from '@/components/AudioPlayer';
 
 type Genre = 'All' | 'Hip-Hop' | 'Trap' | 'R&B' | 'Pop' | 'Electronic';
 
@@ -28,6 +29,7 @@ interface Beat {
   coverArt: string;
   bpm: number;
   licenses: License[];
+  audioUrl: string;
 }
 
 interface CartItem {
@@ -93,6 +95,7 @@ const mockBeats: Beat[] = [
     coverArt: '/img/f6aaeda1-3a98-4c73-9138-1cd6b7b330c4.jpg',
     bpm: 85,
     licenses: defaultLicenses,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
   },
   {
     id: 2,
@@ -105,6 +108,7 @@ const mockBeats: Beat[] = [
     coverArt: '/img/6301d87f-5dcd-4cb1-9893-6d095deca425.jpg',
     bpm: 128,
     licenses: defaultLicenses,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
   },
   {
     id: 3,
@@ -117,6 +121,7 @@ const mockBeats: Beat[] = [
     coverArt: '/img/ffbf6fa6-4a55-4e5e-b746-d1dc04d07a12.jpg',
     bpm: 140,
     licenses: defaultLicenses,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
   },
   {
     id: 4,
@@ -129,6 +134,7 @@ const mockBeats: Beat[] = [
     coverArt: '/img/f6aaeda1-3a98-4c73-9138-1cd6b7b330c4.jpg',
     bpm: 90,
     licenses: defaultLicenses,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
   },
   {
     id: 5,
@@ -141,6 +147,7 @@ const mockBeats: Beat[] = [
     coverArt: '/img/6301d87f-5dcd-4cb1-9893-6d095deca425.jpg',
     bpm: 120,
     licenses: defaultLicenses,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
   },
   {
     id: 6,
@@ -153,6 +160,7 @@ const mockBeats: Beat[] = [
     coverArt: '/img/ffbf6fa6-4a55-4e5e-b746-d1dc04d07a12.jpg',
     bpm: 145,
     licenses: defaultLicenses,
+    audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
   },
 ];
 
@@ -363,6 +371,14 @@ const Index = () => {
                     <p className="text-sm text-muted-foreground">{beat.producer}</p>
                   </div>
                 </Link>
+
+                <div className="mb-3 p-3 bg-secondary/30 rounded-lg">
+                  <AudioPlayer
+                    audioUrl={beat.audioUrl}
+                    isPlaying={playingId === beat.id}
+                    onPlayPause={() => togglePlay(beat.id)}
+                  />
+                </div>
 
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">

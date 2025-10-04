@@ -7,6 +7,7 @@ import Icon from '@/components/ui/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LicenseSelector, { type License } from '@/components/LicenseSelector';
+import AudioPlayer from '@/components/AudioPlayer';
 
 interface Producer {
   id: string;
@@ -38,6 +39,7 @@ interface Beat {
   plays: number;
   likes: number;
   licenses: License[];
+  audioUrl: string;
 }
 
 const mockProducers: Record<string, Producer> = {
@@ -151,6 +153,7 @@ const mockBeats: Record<string, Beat[]> = {
       plays: 15200,
       likes: 890,
       licenses: defaultLicenses,
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
     },
     {
       id: 4,
@@ -163,6 +166,7 @@ const mockBeats: Record<string, Beat[]> = {
       plays: 12400,
       likes: 720,
       licenses: defaultLicenses,
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3',
     },
   ],
   'beatmaker-pro': [
@@ -177,6 +181,7 @@ const mockBeats: Record<string, Beat[]> = {
       plays: 18500,
       likes: 1050,
       licenses: defaultLicenses,
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
     },
     {
       id: 5,
@@ -189,6 +194,7 @@ const mockBeats: Record<string, Beat[]> = {
       plays: 20100,
       likes: 1340,
       licenses: defaultLicenses,
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3',
     },
   ],
   'trapking': [
@@ -203,6 +209,7 @@ const mockBeats: Record<string, Beat[]> = {
       plays: 25600,
       likes: 1680,
       licenses: defaultLicenses,
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3',
     },
     {
       id: 6,
@@ -215,6 +222,7 @@ const mockBeats: Record<string, Beat[]> = {
       plays: 30200,
       likes: 2100,
       licenses: defaultLicenses,
+      audioUrl: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3',
     },
   ],
 };
@@ -390,6 +398,14 @@ const ProducerProfile = () => {
                   <div className="p-4">
                     <h3 className="font-bold text-lg mb-3">{beat.title}</h3>
 
+                    <div className="mb-3 p-3 bg-secondary/30 rounded-lg">
+                      <AudioPlayer
+                        audioUrl={beat.audioUrl}
+                        isPlaying={playingId === beat.id}
+                        onPlayPause={() => togglePlay(beat.id)}
+                      />
+                    </div>
+
                     <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
                       <div className="flex items-center gap-1">
                         <Icon name="Music2" size={16} />
@@ -405,7 +421,7 @@ const ProducerProfile = () => {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-3">
                       <p className="text-sm text-muted-foreground">
                         От <span className="text-2xl font-bold text-primary">${beat.price}</span>
                       </p>
