@@ -6,6 +6,7 @@ import { Card } from '@/components/ui/card';
 import Icon from '@/components/ui/icon';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import LicenseSelector, { type License } from '@/components/LicenseSelector';
 
 interface Producer {
   id: string;
@@ -29,12 +30,14 @@ interface Producer {
 interface Beat {
   id: number;
   title: string;
+  producer: string;
   price: number;
   genre: string;
   coverArt: string;
   bpm: number;
   plays: number;
   likes: number;
+  licenses: License[];
 }
 
 const mockProducers: Record<string, Producer> = {
@@ -93,71 +96,125 @@ const mockProducers: Record<string, Producer> = {
   },
 };
 
+const defaultLicenses: License[] = [
+  {
+    type: 'basic',
+    name: 'Basic',
+    price: 30,
+    features: [
+      'MP3 файл (320kbps)',
+      'До 5,000 стримов',
+      'Некоммерческое использование',
+      '1 музыкальное видео',
+      'Тег продюсера обязателен',
+    ],
+  },
+  {
+    type: 'premium',
+    name: 'Premium',
+    price: 100,
+    features: [
+      'WAV + MP3 файлы',
+      'До 500,000 стримов',
+      'Коммерческое использование',
+      '10 музыкальных видео',
+      'Разделение прав (50/50)',
+      'Тег продюсера опционален',
+    ],
+    popular: true,
+  },
+  {
+    type: 'exclusive',
+    name: 'Exclusive',
+    price: 500,
+    features: [
+      'WAV + Stems (дорожки)',
+      'Неограниченные стримы',
+      'Полные права владения',
+      'Бит снимается с продажи',
+      'Без разделения прав',
+      'Без тега продюсера',
+    ],
+  },
+];
+
 const mockBeats: Record<string, Beat[]> = {
   'dj-phantom': [
     {
       id: 1,
       title: 'Midnight Dreams',
-      price: 50,
+      producer: 'DJ Phantom',
+      price: 30,
       genre: 'Hip-Hop',
       coverArt: '/img/f6aaeda1-3a98-4c73-9138-1cd6b7b330c4.jpg',
       bpm: 85,
       plays: 15200,
       likes: 890,
+      licenses: defaultLicenses,
     },
     {
       id: 4,
       title: 'Smooth Vibes',
-      price: 55,
+      producer: 'DJ Phantom',
+      price: 30,
       genre: 'R&B',
       coverArt: '/img/f6aaeda1-3a98-4c73-9138-1cd6b7b330c4.jpg',
       bpm: 90,
       plays: 12400,
       likes: 720,
+      licenses: defaultLicenses,
     },
   ],
   'beatmaker-pro': [
     {
       id: 2,
       title: 'Neon Lights',
-      price: 75,
+      producer: 'BeatMaker Pro',
+      price: 30,
       genre: 'Electronic',
       coverArt: '/img/6301d87f-5dcd-4cb1-9893-6d095deca425.jpg',
       bpm: 128,
       plays: 18500,
       likes: 1050,
+      licenses: defaultLicenses,
     },
     {
       id: 5,
       title: 'Pop Dreams',
-      price: 65,
+      producer: 'BeatMaker Pro',
+      price: 30,
       genre: 'Pop',
       coverArt: '/img/6301d87f-5dcd-4cb1-9893-6d095deca425.jpg',
       bpm: 120,
       plays: 20100,
       likes: 1340,
+      licenses: defaultLicenses,
     },
   ],
   'trapking': [
     {
       id: 3,
       title: 'Urban Flow',
-      price: 60,
+      producer: 'TrapKing',
+      price: 30,
       genre: 'Trap',
       coverArt: '/img/ffbf6fa6-4a55-4e5e-b746-d1dc04d07a12.jpg',
       bpm: 140,
       plays: 25600,
       likes: 1680,
+      licenses: defaultLicenses,
     },
     {
       id: 6,
       title: 'Dark Energy',
-      price: 70,
+      producer: 'TrapKing',
+      price: 30,
       genre: 'Trap',
       coverArt: '/img/ffbf6fa6-4a55-4e5e-b746-d1dc04d07a12.jpg',
       bpm: 145,
       plays: 30200,
       likes: 2100,
+      licenses: defaultLicenses,
     },
   ],
 };
@@ -349,12 +406,18 @@ const ProducerProfile = () => {
                     </div>
 
                     <div className="flex items-center justify-between">
-                      <p className="text-2xl font-bold text-primary">${beat.price}</p>
-                      <Button>
-                        <Icon name="ShoppingCart" size={18} className="mr-2" />
-                        Купить
-                      </Button>
+                      <p className="text-sm text-muted-foreground">
+                        От <span className="text-2xl font-bold text-primary">${beat.price}</span>
+                      </p>
                     </div>
+                    
+                    <LicenseSelector
+                      beat={beat}
+                      licenses={beat.licenses}
+                      onAddToCart={(license) => {
+                        console.log('Added to cart:', beat.title, license.name);
+                      }}
+                    />
                   </div>
                 </Card>
               ))}

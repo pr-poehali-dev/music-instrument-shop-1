@@ -13,6 +13,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import LicenseSelector, { type License } from '@/components/LicenseSelector';
 
 type Genre = 'All' | 'Hip-Hop' | 'Trap' | 'R&B' | 'Pop' | 'Electronic';
 
@@ -26,11 +27,59 @@ interface Beat {
   genre: Genre;
   coverArt: string;
   bpm: number;
+  licenses: License[];
 }
 
-interface CartItem extends Beat {
+interface CartItem {
+  beatId: number;
+  beatTitle: string;
+  producer: string;
+  coverArt: string;
+  license: License;
   quantity: number;
 }
+
+const defaultLicenses: License[] = [
+  {
+    type: 'basic',
+    name: 'Basic',
+    price: 30,
+    features: [
+      'MP3 файл (320kbps)',
+      'До 5,000 стримов',
+      'Некоммерческое использование',
+      '1 музыкальное видео',
+      'Тег продюсера обязателен',
+    ],
+  },
+  {
+    type: 'premium',
+    name: 'Premium',
+    price: 100,
+    features: [
+      'WAV + MP3 файлы',
+      'До 500,000 стримов',
+      'Коммерческое использование',
+      '10 музыкальных видео',
+      'Разделение прав (50/50)',
+      'Тег продюсера опционален',
+    ],
+    popular: true,
+  },
+  {
+    type: 'exclusive',
+    name: 'Exclusive',
+    price: 500,
+    features: [
+      'WAV + Stems (дорожки)',
+      'Неограниченные стримы',
+      'Полные права владения',
+      'Бит снимается с продажи',
+      'Без разделения прав',
+      'Без тега продюсера',
+    ],
+  },
+];
 
 const mockBeats: Beat[] = [
   {
@@ -39,10 +88,11 @@ const mockBeats: Beat[] = [
     producer: 'DJ Phantom',
     producerId: 'dj-phantom',
     producerAvatar: '',
-    price: 50,
+    price: 30,
     genre: 'Hip-Hop',
     coverArt: '/img/f6aaeda1-3a98-4c73-9138-1cd6b7b330c4.jpg',
     bpm: 85,
+    licenses: defaultLicenses,
   },
   {
     id: 2,
@@ -50,10 +100,11 @@ const mockBeats: Beat[] = [
     producer: 'BeatMaker Pro',
     producerId: 'beatmaker-pro',
     producerAvatar: '',
-    price: 75,
+    price: 30,
     genre: 'Electronic',
     coverArt: '/img/6301d87f-5dcd-4cb1-9893-6d095deca425.jpg',
     bpm: 128,
+    licenses: defaultLicenses,
   },
   {
     id: 3,
@@ -61,10 +112,11 @@ const mockBeats: Beat[] = [
     producer: 'TrapKing',
     producerId: 'trapking',
     producerAvatar: '',
-    price: 60,
+    price: 30,
     genre: 'Trap',
     coverArt: '/img/ffbf6fa6-4a55-4e5e-b746-d1dc04d07a12.jpg',
     bpm: 140,
+    licenses: defaultLicenses,
   },
   {
     id: 4,
@@ -72,10 +124,11 @@ const mockBeats: Beat[] = [
     producer: 'DJ Phantom',
     producerId: 'dj-phantom',
     producerAvatar: '',
-    price: 55,
+    price: 30,
     genre: 'R&B',
     coverArt: '/img/f6aaeda1-3a98-4c73-9138-1cd6b7b330c4.jpg',
     bpm: 90,
+    licenses: defaultLicenses,
   },
   {
     id: 5,
@@ -83,10 +136,11 @@ const mockBeats: Beat[] = [
     producer: 'BeatMaker Pro',
     producerId: 'beatmaker-pro',
     producerAvatar: '',
-    price: 65,
+    price: 30,
     genre: 'Pop',
     coverArt: '/img/6301d87f-5dcd-4cb1-9893-6d095deca425.jpg',
     bpm: 120,
+    licenses: defaultLicenses,
   },
   {
     id: 6,
@@ -94,10 +148,11 @@ const mockBeats: Beat[] = [
     producer: 'TrapKing',
     producerId: 'trapking',
     producerAvatar: '',
-    price: 70,
+    price: 30,
     genre: 'Trap',
     coverArt: '/img/ffbf6fa6-4a55-4e5e-b746-d1dc04d07a12.jpg',
     bpm: 145,
+    licenses: defaultLicenses,
   },
 ];
 
@@ -117,23 +172,37 @@ const Index = () => {
     return matchesGenre && matchesSearch;
   });
 
-  const addToCart = (beat: Beat) => {
+  const addToCart = (beat: Beat, license: License) => {
     setCart((prev) => {
-      const existing = prev.find((item) => item.id === beat.id);
+      const existing = prev.find(
+        (item) => item.beatId === beat.id && item.license.type === license.type
+      );
       if (existing) {
         return prev.map((item) =>
-          item.id === beat.id ? { ...item, quantity: item.quantity + 1 } : item
+          item.beatId === beat.id && item.license.type === license.type
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
         );
       }
-      return [...prev, { ...beat, quantity: 1 }];
+      return [
+        ...prev,
+        {
+          beatId: beat.id,
+          beatTitle: beat.title,
+          producer: beat.producer,
+          coverArt: beat.coverArt,
+          license,
+          quantity: 1,
+        },
+      ];
     });
   };
 
-  const removeFromCart = (id: number) => {
-    setCart((prev) => prev.filter((item) => item.id !== id));
+  const removeFromCart = (index: number) => {
+    setCart((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const cartTotal = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const cartTotal = cart.reduce((sum, item) => sum + item.license.price * item.quantity, 0);
 
   const togglePlay = (id: number) => {
     setPlayingId(playingId === id ? null : id);
@@ -172,25 +241,30 @@ const Index = () => {
                       <p className="text-muted-foreground text-center py-8">Корзина пуста</p>
                     ) : (
                       <>
-                        {cart.map((item) => (
+                        {cart.map((item, index) => (
                           <div
-                            key={item.id}
+                            key={`${item.beatId}-${item.license.type}-${index}`}
                             className="flex items-center gap-4 p-4 bg-card rounded-lg border border-border"
                           >
                             <img
                               src={item.coverArt}
-                              alt={item.title}
+                              alt={item.beatTitle}
                               className="w-16 h-16 rounded-lg object-cover"
                             />
                             <div className="flex-1">
-                              <h3 className="font-semibold">{item.title}</h3>
+                              <h3 className="font-semibold">{item.beatTitle}</h3>
                               <p className="text-sm text-muted-foreground">{item.producer}</p>
-                              <p className="text-sm font-bold text-primary">${item.price}</p>
+                              <Badge variant="secondary" className="text-xs mt-1">
+                                {item.license.name}
+                              </Badge>
+                              <p className="text-sm font-bold text-primary mt-1">
+                                ${item.license.price}
+                              </p>
                             </div>
                             <Button
                               variant="ghost"
                               size="icon"
-                              onClick={() => removeFromCart(item.id)}
+                              onClick={() => removeFromCart(index)}
                             >
                               <Icon name="Trash2" size={18} />
                             </Button>
@@ -297,15 +371,16 @@ const Index = () => {
                       <span>{beat.bpm} BPM</span>
                     </div>
                   </div>
-                  <p className="text-xl font-bold text-primary">${beat.price}</p>
+                  <p className="text-sm text-muted-foreground">
+                    От <span className="text-xl font-bold text-primary">${beat.price}</span>
+                  </p>
                 </div>
 
-                <Button
-                  className="w-full"
-                  onClick={() => addToCart(beat)}
-                >
-                  Добавить в корзину
-                </Button>
+                <LicenseSelector
+                  beat={beat}
+                  licenses={beat.licenses}
+                  onAddToCart={(license) => addToCart(beat, license)}
+                />
               </div>
             </Card>
           ))}
