@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -19,6 +20,7 @@ interface Beat {
   id: number;
   title: string;
   producer: string;
+  producerId: string;
   producerAvatar: string;
   price: number;
   genre: Genre;
@@ -35,6 +37,7 @@ const mockBeats: Beat[] = [
     id: 1,
     title: 'Midnight Dreams',
     producer: 'DJ Phantom',
+    producerId: 'dj-phantom',
     producerAvatar: '',
     price: 50,
     genre: 'Hip-Hop',
@@ -45,6 +48,7 @@ const mockBeats: Beat[] = [
     id: 2,
     title: 'Neon Lights',
     producer: 'BeatMaker Pro',
+    producerId: 'beatmaker-pro',
     producerAvatar: '',
     price: 75,
     genre: 'Electronic',
@@ -55,6 +59,7 @@ const mockBeats: Beat[] = [
     id: 3,
     title: 'Urban Flow',
     producer: 'TrapKing',
+    producerId: 'trapking',
     producerAvatar: '',
     price: 60,
     genre: 'Trap',
@@ -65,6 +70,7 @@ const mockBeats: Beat[] = [
     id: 4,
     title: 'Smooth Vibes',
     producer: 'DJ Phantom',
+    producerId: 'dj-phantom',
     producerAvatar: '',
     price: 55,
     genre: 'R&B',
@@ -75,6 +81,7 @@ const mockBeats: Beat[] = [
     id: 5,
     title: 'Pop Dreams',
     producer: 'BeatMaker Pro',
+    producerId: 'beatmaker-pro',
     producerAvatar: '',
     price: 65,
     genre: 'Pop',
@@ -85,6 +92,7 @@ const mockBeats: Beat[] = [
     id: 6,
     title: 'Dark Energy',
     producer: 'TrapKing',
+    producerId: 'trapking',
     producerAvatar: '',
     price: 70,
     genre: 'Trap',
@@ -271,14 +279,16 @@ const Index = () => {
 
               <div className="p-4">
                 <h3 className="font-bold text-lg mb-1">{beat.title}</h3>
-                <div className="flex items-center gap-2 mb-3">
-                  <Avatar className="w-6 h-6">
-                    <AvatarFallback className="bg-primary text-xs">
-                      {beat.producer[0]}
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-sm text-muted-foreground">{beat.producer}</p>
-                </div>
+                <Link to={`/producer/${beat.producerId}`}>
+                  <div className="flex items-center gap-2 mb-3 hover:opacity-80 transition-opacity">
+                    <Avatar className="w-6 h-6">
+                      <AvatarFallback className="bg-primary text-xs">
+                        {beat.producer[0]}
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="text-sm text-muted-foreground">{beat.producer}</p>
+                  </div>
+                </Link>
 
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-4 text-sm text-muted-foreground">
